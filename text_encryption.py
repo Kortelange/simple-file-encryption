@@ -4,6 +4,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
+from password_dialog import PasswordDialog
 
 class TextEditor:
     def __init__(self, root):
@@ -18,9 +19,10 @@ class TextEditor:
         file_menu.add_command(label="Save", command=self.save_file)
 
     def save_file(self):
-        password = tk.simpledialog.askstring("Password", "Enter a password", show="*")
+        password_dialog = PasswordDialog(root)
+        password = password_dialog.result
+
         if not password:
-            tk.messagebox.showerror("Error", "Password cannot be empty.")
             return
 
         file_path = filedialog.asksaveasfilename(defaultextension=".enc")
