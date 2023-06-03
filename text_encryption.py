@@ -45,13 +45,13 @@ class TextEditor:
         tk.messagebox.showinfo("File Saved", "File saved successfully.")
 
     def open_file(self):
+        file_path = filedialog.askopenfilename(defaultextension=".enc")
+        if not file_path:
+            return
+
         password = tk.simpledialog.askstring("Password", "Enter a password", show="*")
         if not password:
             tk.messagebox.showerror("Error", "Password cannot be empty.")
-            return
-
-        file_path = filedialog.askopenfilename(defaultextension=".enc")
-        if not file_path:
             return
 
         with open(file_path, 'rb') as file:
