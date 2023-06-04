@@ -13,6 +13,7 @@ import base64
 
 
 def derive_key(password, salt):
+    password = password.encode()
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
@@ -34,3 +35,16 @@ def decrypt(key, ciphertext):
     cipher_suite = Fernet(key)
     plain_text = cipher_suite.decrypt(ciphertext)
     return plain_text.decode()
+
+
+def save_encrypted_file(filename, key, plaintext):
+    ciphertext = encrypt(key, plaintext)
+    with open(filename, 'wb') as f:
+        f.write(ciphertext)
+
+
+def open_encrypted_file(filename, key):
+    with open(filename, 'rb') as f:
+        ciphertext = f.read()
+    return decrypt(key, ciphertext)
+
