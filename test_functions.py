@@ -34,14 +34,12 @@ class TestFileIO(unittest.TestCase):
 
             # Create a password and salt, then derive a key
             password = "password"
-            salt = os.urandom(16)  # create a random salt
-            key = derive_key(password, salt)
 
             # Save the encrypted content to the file
-            save_encrypted_file(temp.name, key, plaintext)
+            save_encrypted_file(temp.name, password, plaintext)
 
             # Open the file and read the content
-            decrypted = open_encrypted_file(temp.name, key)
+            decrypted = open_encrypted_file(temp.name, password)
 
             # Make sure the content matches
             self.assertEqual(plaintext, decrypted)

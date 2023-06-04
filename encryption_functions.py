@@ -1,10 +1,4 @@
-import os
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.serialization import load_pem_public_key
+from os import urandom
 from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -37,14 +31,34 @@ def decrypt(key, ciphertext):
     return plain_text.decode()
 
 
-def save_encrypted_file(filename, key, plaintext):
+def save_encrypted_file(filename, password, plaintext):
+    """
+    Generates a random salt, derives a key from the password, encrypts the plaintext,
+    and then writes the salt and the encrypted ciphertext into the file.
+
+    :param filename: The name of the file
+    :param password: The password for encryption
+    :param plaintext: The plaintext to be encrypted
+    """
+    salt = urandom(16)
+    key = derive_key(password, salt)
     ciphertext = encrypt(key, plaintext)
-    with open(filename, 'wb') as f:
-        f.write(ciphertext)
+    with open(filename, "wb") as file:
+        file.write(salt + ciphertext)  # Write salt first, then ciphertext
 
 
-def open_encrypted_file(filename, key):
-    with open(filename, 'rb') as f:
-        ciphertext = f.read()
-    return decrypt(key, ciphertext)
+def open_encrypted_file(filename, password):
+    """
+    Reads the salt and the encrypted ciphertext from the file, derives the key from the
+    salt and password, and then decrypts the ciphertext.
 
+    :param filename: The name of the file
+    :param password: The password for decryption
+    :return: The decrypted text
+    """
+    with open(filename, "rb") as file:
+        salt = file.read(16)  # Read the first 16 bytes as salt
+        ciphertext = file.read()  # Read the rest as ciphertext
+    key = derive_key(password, salt)
+    plaintext = decrypt(key, ciphertext)
+    return plaintext
