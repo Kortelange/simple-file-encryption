@@ -4,6 +4,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import base64
+import argparse
 
 
 def derive_key(password, salt):
@@ -62,3 +63,17 @@ def open_encrypted_file(filename, password):
     key = derive_key(password, salt)
     plaintext = decrypt(key, ciphertext)
     return plaintext
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Encrypt or decrypt a file.')
+    parser.add_argument('filename', help='The name of the file to encrypt or decrypt')
+    parser.add_argument('password', help='The password to use for encryption or decryption')
+    parser.add_argument('--decrypt', '-d', action='store_true', help='Decrypt the file')
+    args = parser.parse_args()
+
+    if args.decrypt:
+        print(open_encrypted_file(args.filename, args.password))
+    else:
+        # We don't have any plaintext to encrypt from the command line
+        print("Only decryption is currently supported from the command line.")
