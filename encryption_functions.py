@@ -8,6 +8,13 @@ import argparse
 
 
 def derive_key(password, salt):
+    """
+    Derives a symmetric encryption key from a password and a salt using the PBKDF2-HMAC-SHA256 key derivation function.
+
+    :param password: The password for key derivation.
+    :param salt: The salt for key derivation.
+    :return: The derived symmetric encryption key.
+    """
     password = password.encode()
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
@@ -19,14 +26,26 @@ def derive_key(password, salt):
 
 
 def encrypt(key, plaintext):
-    # Encryption logic
+    """
+    Encrypts a plaintext using a symmetric encryption key.
+
+    :param key: The symmetric encryption key.
+    :param plaintext: The plaintext to be encrypted.
+    :return: The resulting ciphertext.
+    """
     cipher_suite = Fernet(key)
     cipher_text = cipher_suite.encrypt(plaintext.encode())
     return cipher_text
 
 
 def decrypt(key, ciphertext):
-    # Decryption logic
+    """
+    Decrypts a ciphertext using a symmetric encryption key.
+
+    :param key: The symmetric encryption key.
+    :param ciphertext: The ciphertext to be decrypted.
+    :return: The resulting plaintext.
+    """
     cipher_suite = Fernet(key)
     plain_text = cipher_suite.decrypt(ciphertext)
     return plain_text.decode()
