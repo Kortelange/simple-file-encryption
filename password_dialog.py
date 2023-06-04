@@ -63,3 +63,22 @@ class PasswordDialog(tk.simpledialog.Dialog):
         Store the password for later retrieval.
         """
         self.result = self.password_entry1.get()
+
+
+class SinglePasswordDialog(tk.simpledialog.Dialog):
+    def __init__(self, parent, title=None):
+        self.password = None
+        super().__init__(parent, title)
+
+    def body(self, master):
+        tk.Label(master, text="Password:").grid(row=0)
+        self.password_entry = tk.Entry(master, show="*", width=50)
+        self.password_entry.grid(row=1, padx=10)
+        return self.password_entry
+
+    def apply(self):
+        password = self.password_entry.get()
+        if len(password) == 0:
+            tk.messagebox.showerror("Error", "Password cannot be empty.")
+        else:
+            self.password = password
